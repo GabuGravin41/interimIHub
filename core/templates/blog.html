@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load core_filters %}
+
+{% block content %}
+<!-- Hero Section for Blog -->
+<section class="relative bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+  <div class="bg-black bg-opacity-60">
+    <div class="container mx-auto px-6 py-28 text-center text-white">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">
+        Interim <span style="color: var(--color-gold-light);">Intellectual Hub</span>
+      </h1>
+      <p class="max-w-2xl mx-auto mb-8 text-lg italic">
+        "Where ideas are crafted and wisdom is shared"
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'blog_post_create' %}" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-md font-semibold tracking-wider text-sm shadow-md">
+        <i class="fas fa-feather-alt mr-2"></i> Create New Post
+      </a>
+      {% else %}
+      <div class="space-x-4">
+        <a href="{% url 'accounts:login' %}?next={% url 'blog_post_create' %}" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-md font-semibold tracking-wider text-sm shadow-md">
+          <i class="fas fa-sign-in-alt mr-2"></i> Log In to Create Post
+        </a>
+        <a href="{% url 'accounts:signup' %}" class="bg-transparent hover:bg-white/10 text-white border border-white px-8 py-3 rounded-md font-semibold tracking-wider text-sm shadow-md">
+          <i class="fas fa-user-plus mr-2"></i> Sign Up
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Filter System -->
+<section class="max-w-6xl mx-auto mt-12 mb-10 px-6">
+  <!-- Search Box -->
+  <form method="GET" action="{% url 'blog' %}" class="relative mb-10">
+    <input type="text" name="search" placeholder="Search for knowledge..." 
+           class="w-full p-4 border rounded-md pl-12 shadow-sm focus:ring-2 focus:ring-opacity-50 focus:ring-accent focus:border-transparent"
+           style="font-family: 'Source Sans Pro', sans-serif; background-color: var(--bg-card); color: var(--text-main); border-color: var(--border-color);"
+           value="{{ search|default:'' }}">
+    <button type="submit" class="absolute left-4 top-1/2 transform -translate-y-1/2" style="color: var(--text-muted);">
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+
+  <div class="shadow rounded-lg p-6 flex flex-wrap justify-between gap-4" style="background-color: var(--bg-card);">
+    <!-- First Filter Group - Categories -->
+    <div class="flex flex-wrap gap-4">
+      <!-- Original filter tabs (commented out)
+      <a href="{% url 'blog' %}" class="filter-tab cursor-pointer px-4 py-2 {% if not category %}bg-blue-900 text-white{% else %}bg-gray-100{% endif %} rounded-full border-2 border-transparent font-medium transition hover:border-blue-900"
+           data-filter="all">All Content</a>
+      {% for cat in categories %}
+        <a href="{% url 'blog' %}?category={{ cat }}" class="filter-tab cursor-pointer px-4 py-2 {% if category == cat %}bg-blue-900 text-white{% else %}bg-gray-100{% endif %} rounded-full border-2 border-transparent font-medium transition hover:border-blue-900"
+           data-filter="{{ cat }}">{{ cat|title }}</a>
+      {% endfor %}
+      -->
+      <a href="{% url 'blog' %}" class="filter-tab cursor-pointer px-4 py-2 {% if not category %}bg-blue-700 text-white{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full border-2 border-transparent font-medium transition hover:bg-blue-800"
+           data-filter="all">All Content</a>
+      {% for cat in categories %}
+        <a href="{% url 'blog' %}?category={{ cat }}" class="filter-tab cursor-pointer px-4 py-2 {% if category == cat %}bg-blue-700 text-white{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full border-2 border-transparent font-medium transition hover:bg-blue-800"
+           data-filter="{{ cat }}">{{ cat|title }}</a>
+      {% endfor %}
+    </div>
+    <!-- Second Filter Group - Sorting -->
+    <div class="flex flex-wrap gap-4">
+      <!-- Original sorting tabs (commented out)
+      <a href="{% url 'blog' %}?sort=latest{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'latest' or not sort %}bg-blue-900 text-white{% else %}bg-gray-100{% endif %} rounded-full border-2 border-transparent font-medium transition hover:border-blue-900"
+           data-filter="latest">Latest</a>
+      <a href="{% url 'blog' %}?sort=popular{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'popular' %}bg-blue-900 text-white{% else %}bg-gray-100{% endif %} rounded-full border-2 border-transparent font-medium transition hover:border-blue-900"
+           data-filter="popular">Popular</a>
+      <a href="{% url 'blog' %}?sort=trending{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'trending' %}bg-blue-900 text-white{% else %}bg-gray-100{% endif %} rounded-full border-2 border-transparent font-medium transition hover:border-blue-900"
+           data-filter="trending">Trending</a>
+      -->
+      <a href="{% url 'blog' %}?sort=latest{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'latest' or not sort %}bg-orange-500 text-white{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full font-medium transition"
+           data-filter="latest"><i class="fas fa-calendar-alt mr-1"></i> Latest</a>
+      <a href="{% url 'blog' %}?sort=popular{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'popular' %}bg-orange-500 text-white{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full font-medium transition"
+           data-filter="popular"><i class="fas fa-fire mr-1"></i> Popular</a>
+      <a href="{% url 'blog' %}?sort=trending{% if category %}&category={{ category }}{% endif %}{% if search %}&search={{ search }}{% endif %}" class="filter-tab cursor-pointer px-4 py-2 {% if sort == 'trending' %}bg-orange-500 text-white{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full font-medium transition"
+           data-filter="trending"><i class="fas fa-chart-line mr-1"></i> Trending</a>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content & Sidebar Grid -->
+<div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Blog Posts Column (spanning 2 columns on large screens) -->
+  <main class="lg:col-span-2 space-y-8">
+    {% if posts %}
+      {% for post in posts %}
+        <!-- Blog Post Card -->
+        <article class="content-card {{ post.category }} rounded-md border overflow-hidden shadow-sm hover:shadow-lg transition transform hover:-translate-y-1"
+                 style="border-color: var(--border-color);" data-category="{{ post.category|default:'journal' }}">
+          {% if post.image %}
+          <div class="article-image h-[220px] md:h-[280px] bg-cover bg-center"
+              style="background-image: url('{{ post.image.url }}')"></div>
+          {% else %}
+          <div class="h-[160px] flex items-center justify-center" style="background-color: var(--color-light);">
+            <i class="fas fa-book-open text-6xl" style="color: var(--color-accent); opacity: 0.7;"></i>
+          </div>
+          {% endif %}
+          <div class="p-6 space-y-4 intellectual-border">
+            <div class="flex flex-col sm:flex-row justify-between items-start">
+              <div class="text-sm" style="color: var(--text-muted);">
+                {{ post.created_at|date:"M d, Y" }} • By 
+                <span class="text-orange-500 font-semibold">{{ post.author.user.username }}</span>
+              </div>
+              <span class="inline-block bg-orange-500 text-white text-xs px-3 py-1 rounded-full mt-2 sm:mt-0">
+                {{ post.get_category_display }}
+              </span>
+            </div>
+            <h2 class="text-2xl font-bold" style="color: var(--color-primary);">{{ post.title }}</h2>
+            <p class="text-base" style="color: var(--text-main); line-height: 1.6;">
+              {{ post.content|truncatewords:35 }}
+            </p>
+            <div class="pt-4 flex flex-wrap gap-3 border-t" style="border-color: var(--border-color);">
+              <!-- Original action buttons (commented out)
+              <a href="{% url 'blog_post_detail' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer hover:bg-blue-900 hover:text-white transition px-3 py-2 rounded bg-gray-100">
+                <i class="fas fa-book-open"></i> Read More
+              </a>
+              <a href="{% url 'blog_post_detail' post_id=post.id %}#comments" 
+                 class="action-btn flex items-center gap-2 cursor-pointer hover:bg-blue-900 hover:text-white transition px-3 py-2 rounded bg-gray-100">
+                <i class="fas fa-comments"></i> {{ post.comments.count }} Comments
+              </a>
+              <a href="{% url 'blog_post_edit' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer hover:bg-blue-900 hover:text-white transition px-3 py-2 rounded bg-gray-100">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a href="{% url 'blog_post_delete' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer hover:bg-red-700 hover:text-white transition px-3 py-2 rounded bg-red-100 text-red-700">
+                <i class="fas fa-trash-alt"></i> Delete
+              </a>
+              -->
+              <a href="{% url 'blog_post_detail' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white text-sm">
+                <i class="fas fa-book-open mr-1"></i> Continue Reading
+              </a>
+              <a href="{% url 'blog_post_detail' post_id=post.id %}#comments" 
+                 class="action-btn flex items-center gap-2 cursor-pointer px-3 py-2 rounded text-sm" style="background-color: var(--color-light); color: var(--text-main);">
+                <i class="fas fa-comments mr-1"></i> {{ post.comments.count }} Comments
+              </a>
+              {% if user.is_authenticated and post.author.user == user or user.is_staff %}
+              <a href="{% url 'blog_post_edit' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer px-3 py-2 rounded text-sm" style="background-color: var(--color-light); color: var(--text-main);">
+                <i class="fas fa-feather-alt mr-1"></i> Edit
+              </a>
+              <a href="{% url 'blog_post_delete' post_id=post.id %}" 
+                 class="action-btn flex items-center gap-2 cursor-pointer px-3 py-2 rounded bg-red-100 hover:bg-red-200 text-red-700 text-sm">
+                <i class="fas fa-trash-alt mr-1"></i> Delete
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <!-- No posts found message -->
+      <div class="rounded-md border shadow-sm p-10 text-center" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <div class="mb-6">
+          <i class="fas fa-search text-4xl text-blue-500 opacity-70"></i>
+        </div>
+        <h2 class="text-2xl font-bold mb-4" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">No Posts Found</h2>
+        <p style="color: var(--text-muted);">There are no publications matching your criteria at the moment.</p>
+        <a href="{% url 'blog_post_create' %}" class="mt-6 inline-block bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-md shadow-sm">
+          <i class="fas fa-feather-alt mr-2"></i> Create the First Post
+        </a>
+      </div>
+    {% endif %}
+  </main>
+
+  <!-- Sidebar Section -->  
+  <aside class="sidebar rounded-md border shadow-sm p-6 space-y-8 h-fit" style="background-color: var(--bg-card); border-color: var(--border-color);">
+    <div class="sidebar-section intellectual-border">
+      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Recent Publications</h3>
+      <ul class="mt-4 space-y-4">
+        {% for recent_post in recent_posts %}
+          <li>
+            <a href="{% url 'blog_post_detail' post_id=recent_post.id %}" class="hover:text-blue-700 transition-colors" style="color: var(--text-main);">
+              {{ recent_post.title }}
+              <div class="text-xs mt-1 text-orange-500">{{ recent_post.created_at|date:"M d, Y" }}</div>
+            </a>
+          </li>
+        {% empty %}
+          <li style="color: var(--text-muted);" class="italic">No recent publications</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="sidebar-section intellectual-border">
+      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Share Your Thoughts</h3>
+      <div class="mt-4">
+        <p class="mb-3" style="color: var(--text-main);">Have something meaningful to share with the intellectual community?</p>
+        <a href="{% url 'blog_post_create' %}" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded inline-block text-sm">
+          <i class="fas fa-feather-alt mr-2"></i> Create New Post
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-section intellectual-border">
+      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Categories</h3>
+      <ul class="mt-3 space-y-2 text-sm">
+        {% for cat in categories %}
+          <li>
+            <a href="{% url 'blog' %}?category={{ cat }}" class="hover:text-blue-700 flex justify-between" style="color: var(--text-main);">
+              <span><i class="fas {% if cat == 'research' %}fa-flask text-purple-500{% elif cat == 'journal' %}fa-book text-blue-500{% elif cat == 'projects' %}fa-project-diagram text-green-500{% else %}fa-file-alt text-orange-500{% endif %} mr-2"></i> {{ cat|title }}</span>
+              <span class="px-2 rounded-full" style="background-color: var(--color-light); color: var(--text-main);">{{ category_counts|get_item:cat }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="sidebar-section intellectual-border">
+      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Popular Tags</h3>
+      <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+        {% for tag in popular_tags %}
+        <li>
+          <a href="{% url 'blog' %}?tag={{ tag.name }}" class="hover:bg-blue-700 hover:text-white px-3 py-1 rounded-full transition" style="background-color: var(--color-light); color: var(--text-main);">
+            #{{ tag.name }}
+            <span class="text-xs opacity-70">({{ tag.num_posts }})</span>
+          </a>
+        </li>
+        {% empty %}
+        <li class="italic w-full text-center py-2" style="color: var(--text-muted);">No tags yet</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<!-- JavaScript for Interactive Features -->
+<script>
+  // For handling dictionary access in templates (since we need to access category_counts by key)
+  // This is actually not needed as Django already has this functionality through dict.get
+  // But keeping here for reference
+  document.addEventListener('DOMContentLoaded', function() {
+    // Code Copy Functionality from the demo section
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    copyButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const codeText = this.closest('.code-container').querySelector('code').innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+          this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            this.innerHTML = '<i class="far fa-copy"></i> Copy';
+          }, 2000);
+        });
+      });
+    });
+  });
+</script>
+{% endblock %}

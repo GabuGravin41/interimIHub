@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-lg mx-auto p-6">
+    <!-- Back button -->
+    <div class="mb-6">
+        <a href="{% url 'blog' %}" class="text-blue-700 hover:text-blue-900 hover:underline flex items-center transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Blog
+        </a>
+    </div>
+
+    <div class="rounded-lg shadow-lg p-8" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">Create Account</h1>
+            <p class="mt-2" style="color: var(--text-muted);">Join the Interim Intellectual Hub community</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Error messages -->
+            {% if form.errors %}
+            <div class="p-4 mb-4 rounded-md" style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid #dc2626;">
+                <p class="font-bold">Please correct the following errors:</p>
+                <ul class="list-disc list-inside mt-2">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <!-- Username field -->
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Username</label>
+                {{ form.username }}
+            </div>
+            
+            <!-- Email field -->
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Email Address</label>
+                {{ form.email }}
+            </div>
+            
+            <!-- Password field -->
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Password</label>
+                {{ form.password1 }}
+                <p class="text-xs mt-1" style="color: var(--text-muted);">Your password must be at least 8 characters and can't be entirely numeric.</p>
+            </div>
+            
+            <!-- Confirm Password field -->
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Confirm Password</label>
+                {{ form.password2 }}
+            </div>
+            
+            <!-- Submit button -->
+            <div class="flex justify-center mt-8">
+                <button type="submit" class="w-full py-3 rounded shadow-sm transition-colors text-center bg-blue-700 hover:bg-blue-800 text-white">
+                    <i class="fas fa-user-plus mr-2"></i> Create Account
+                </button>
+            </div>
+            
+            <!-- Login link -->
+            <div class="text-center mt-4">
+                <p style="color: var(--text-muted);">
+                    Already have an account? 
+                    <a href="{% url 'accounts:login' %}" class="text-blue-700 hover:underline">Log in</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

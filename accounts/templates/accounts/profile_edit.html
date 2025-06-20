@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+    <!-- Back button -->
+    <div class="mb-6">
+        <a href="{% url 'accounts:profile' %}" class="text-blue-700 hover:text-blue-900 hover:underline flex items-center transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Profile
+        </a>
+    </div>
+
+    <div class="rounded-lg shadow-lg p-8" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <h1 class="text-3xl font-bold mb-6 border-b pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-color: var(--border-color);">
+            Edit Your Profile
+        </h1>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- User Info Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold mb-4" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">
+                    Account Information
+                </h2>
+                
+                <!-- Username field -->
+                <div class="form-group mb-4">
+                    <label for="{{ user_form.username.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Username
+                    </label>
+                    {{ user_form.username.errors }}
+                    {{ user_form.username }}
+                </div>
+                
+                <!-- Email field -->
+                <div class="form-group mb-4">
+                    <label for="{{ user_form.email.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Email Address
+                    </label>
+                    {{ user_form.email.errors }}
+                    {{ user_form.email }}
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- First Name field -->
+                    <div class="form-group">
+                        <label for="{{ user_form.first_name.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                            First Name
+                        </label>
+                        {{ user_form.first_name.errors }}
+                        {{ user_form.first_name }}
+                    </div>
+                    
+                    <!-- Last Name field -->
+                    <div class="form-group">
+                        <label for="{{ user_form.last_name.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                            Last Name
+                        </label>
+                        {{ user_form.last_name.errors }}
+                        {{ user_form.last_name }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Info Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold mb-4" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">
+                    Profile Details
+                </h2>
+                
+                <!-- Profile picture field -->
+                <div class="form-group mb-6">
+                    <label for="{{ profile_form.profile_picture.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Profile Picture
+                    </label>
+                    
+                    {% if user.profile.profile_picture %}
+                    <div class="mb-3 flex items-center">
+                        <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-16 h-16 rounded-full object-cover mr-4">
+                        <p class="text-sm" style="color: var(--text-muted);">Current profile picture</p>
+                    </div>
+                    {% endif %}
+                    
+                    {{ profile_form.profile_picture.errors }}
+                    <div class="mt-2 px-3 py-4 border border-dashed rounded-md" style="background-color: var(--bg-main); border-color: var(--border-color);">
+                        <input type="file" name="{{ profile_form.profile_picture.name }}" id="{{ profile_form.profile_picture.id_for_label }}" 
+                               class="w-full" style="color: var(--text-main);">
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Recommended size: 400x400 pixels</p>
+                    </div>
+                </div>
+                
+                <!-- Bio field -->
+                <div class="form-group mb-4">
+                    <label for="{{ profile_form.bio.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Bio
+                    </label>
+                    {{ profile_form.bio.errors }}
+                    {{ profile_form.bio }}
+                    <p class="text-xs mt-1" style="color: var(--text-muted);">Tell the community about yourself</p>
+                </div>
+                
+                <!-- Website field -->
+                <div class="form-group">
+                    <label for="{{ profile_form.website.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Website
+                    </label>
+                    {{ profile_form.website.errors }}
+                    {{ profile_form.website }}
+                </div>
+            </div>
+            
+            <!-- Form actions -->
+            <div class="flex flex-wrap gap-4 mt-8">
+                <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded shadow-sm transition-colors">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+                <a href="{% url 'accounts:profile' %}" class="px-6 py-3 rounded shadow-sm transition-colors" style="background-color: var(--color-light); color: var(--text-main);">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

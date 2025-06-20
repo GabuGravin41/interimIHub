@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <!-- Back button -->
+    <div class="mb-6">
+        <a href="{% url 'blog' %}" class="text-blue-700 hover:text-blue-900 hover:underline flex items-center transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Blog
+        </a>
+    </div>
+
+    <div class="rounded-lg shadow-lg overflow-hidden" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <!-- Profile Header -->
+        <div class="p-8 border-b" style="border-color: var(--border-color);">
+            <div class="flex flex-col md:flex-row items-center">
+                <!-- Profile Image -->
+                <div class="w-32 h-32 rounded-full overflow-hidden flex-shrink-0 mb-4 md:mb-0 md:mr-6" style="background-color: var(--color-light);">
+                    {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-4xl" style="color: var(--color-primary);">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Profile Info -->
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">{{ user.username }}</h1>
+                    <p style="color: var(--text-muted);">Member since {{ user.profile.date_joined|date:"F j, Y" }}</p>
+                    
+                    {% if user.first_name or user.last_name %}
+                    <p class="mt-2" style="color: var(--text-main);">{{ user.first_name }} {{ user.last_name }}</p>
+                    {% endif %}
+                    
+                    {% if user.email %}
+                    <p class="mt-1" style="color: var(--text-main);">{{ user.email }}</p>
+                    {% endif %}
+                    
+                    {% if user.profile.website %}
+                    <a href="{{ user.profile.website }}" target="_blank" class="mt-2 inline-flex items-center text-blue-700 hover:underline">
+                        <i class="fas fa-globe mr-1"></i> {{ user.profile.website }}
+                    </a>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'accounts:profile_edit' %}" class="inline-flex items-center px-4 py-2 rounded text-sm" style="background-color: var(--color-light); color: var(--text-main);">
+                            <i class="fas fa-edit mr-1"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bio Section -->
+        {% if user.profile.bio %}
+        <div class="p-8 border-b" style="border-color: var(--border-color);">
+            <h2 class="text-xl font-bold mb-4" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">About</h2>
+            <div class="prose max-w-none" style="color: var(--text-main);">
+                <p>{{ user.profile.bio|linebreaks }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- User's Posts Section -->
+        <div class="p-8">
+            <h2 class="text-xl font-bold mb-6" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">Your Publications</h2>
+            
+            {% for post in user.profile.blogpost_set.all %}
+            <div class="mb-6 pb-6 border-b last:border-0" style="border-color: var(--border-color);">
+                <a href="{% url 'blog_post_detail' post_id=post.id %}" class="block">
+                    <h3 class="text-lg font-bold hover:text-blue-700" style="color: var(--text-main);">{{ post.title }}</h3>
+                    <div class="flex items-center mt-2 text-sm" style="color: var(--text-muted);">
+                        <span class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-1"></i> {{ post.created_at|date:"M d, Y" }}
+                        </span>
+                        <span class="mx-2">•</span>
+                        <span class="flex items-center">
+                            <i class="fas fa-tag mr-1"></i> {{ post.get_category_display }}
+                        </span>
+                        <span class="mx-2">•</span>
+                        <span class="flex items-center">
+                            <i class="fas fa-comment mr-1"></i> {{ post.comments.count }} comments
+                        </span>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="p-6 rounded-lg text-center border" style="background-color: var(--bg-main); color: var(--text-muted); border-color: var(--border-color);">
+                <p>You haven't published any posts yet.</p>
+                <a href="{% url 'blog_post_create' %}" class="inline-block mt-4 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded">
+                    <i class="fas fa-feather-alt mr-1"></i> Create Your First Post
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

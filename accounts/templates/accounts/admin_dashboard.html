@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-10">
+    <!-- Admin Dashboard Header -->
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl font-bold mb-3" style="font-family: 'Playfair Display', serif; color: var(--color-primary);">Admin Dashboard</h1>
+        <p class="text-lg" style="color: var(--text-muted);">User Statistics and Analytics</p>
+    </div>
+
+    <!-- Stats Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <!-- Total Users Card -->
+        <div class="p-6 rounded-lg shadow-md text-center" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: rgba(59, 130, 246, 0.1);">
+                <i class="fas fa-users text-2xl" style="color: var(--color-blue);"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1" style="color: var(--color-primary);">{{ total_users }}</h3>
+            <p class="text-sm" style="color: var(--text-muted);">Total Users</p>
+        </div>
+
+        <!-- Active Users Card -->
+        <div class="p-6 rounded-lg shadow-md text-center" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: rgba(16, 185, 129, 0.1);">
+                <i class="fas fa-user-check text-2xl" style="color: #10b981;"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1" style="color: var(--color-primary);">{{ active_users }}</h3>
+            <p class="text-sm" style="color: var(--text-muted);">Active Users</p>
+        </div>
+
+        <!-- Recent Signups Card -->
+        <div class="p-6 rounded-lg shadow-md text-center" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: rgba(245, 158, 11, 0.1);">
+                <i class="fas fa-user-plus text-2xl" style="color: #f59e0b;"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1" style="color: var(--color-primary);">{{ recent_users }}</h3>
+            <p class="text-sm" style="color: var(--text-muted);">New Users (30 days)</p>
+        </div>
+
+        <!-- Staff Users Card -->
+        <div class="p-6 rounded-lg shadow-md text-center" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: rgba(220, 38, 38, 0.1);">
+                <i class="fas fa-user-shield text-2xl" style="color: #dc2626;"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1" style="color: var(--color-primary);">{{ staff_users }}</h3>
+            <p class="text-sm" style="color: var(--text-muted);">Staff Members</p>
+        </div>
+    </div>
+
+    <!-- Profile Analytics Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <!-- Profile Completion Card -->
+        <div class="p-6 rounded-lg shadow-md" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <h3 class="text-xl font-bold mb-5 pb-2 border-b" style="color: var(--color-primary); border-color: var(--border-color);">Profile Completion</h3>
+            
+            <!-- Total Profiles -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background-color: rgba(59, 130, 246, 0.1);">
+                        <i class="fas fa-id-card" style="color: var(--color-blue);"></i>
+                    </div>
+                    <span style="color: var(--text-main);">Total Profiles</span>
+                </div>
+                <span class="font-bold" style="color: var(--color-primary);">{{ total_profiles }}</span>
+            </div>
+            
+            <!-- Profiles with Bio -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background-color: rgba(16, 185, 129, 0.1);">
+                        <i class="fas fa-align-left" style="color: #10b981;"></i>
+                    </div>
+                    <span style="color: var(--text-main);">Profiles with Bio</span>
+                </div>
+                <span class="font-bold" style="color: var(--color-primary);">{{ profiles_with_bio }}</span>
+            </div>
+            
+            <!-- Profiles with Picture -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background-color: rgba(245, 158, 11, 0.1);">
+                        <i class="fas fa-camera" style="color: #f59e0b;"></i>
+                    </div>
+                    <span style="color: var(--text-main);">Profiles with Picture</span>
+                </div>
+                <span class="font-bold" style="color: var(--color-primary);">{{ profiles_with_picture }}</span>
+            </div>
+        </div>
+        
+        <!-- Bio Completion Rate -->
+        <div class="p-6 rounded-lg shadow-md" style="background-color: var(--bg-card); border-color: var(--border-color);">
+            <h3 class="text-xl font-bold mb-5 pb-2 border-b" style="color: var(--color-primary); border-color: var(--border-color);">Profile Completion Rates</h3>
+            
+            <!-- Bio Completion Rate -->
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span style="color: var(--text-main);">Bio Completion</span>
+                    <span class="font-medium" style="color: var(--color-primary);">
+                        {{ profiles_with_bio|default:0 }}/{{ total_profiles|default:1 }}
+                        ({% widthratio profiles_with_bio total_profiles 100 %}%)
+                    </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {% widthratio profiles_with_bio total_profiles 100 %}%"></div>
+                </div>
+            </div>
+            
+            <!-- Profile Picture Completion Rate -->
+            <div>
+                <div class="flex justify-between mb-2">
+                    <span style="color: var(--text-main);">Profile Picture</span>
+                    <span class="font-medium" style="color: var(--color-primary);">
+                        {{ profiles_with_picture|default:0 }}/{{ total_profiles|default:1 }}
+                        ({% widthratio profiles_with_picture total_profiles 100 %}%)
+                    </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-green-600 h-2.5 rounded-full" style="width: {% widthratio profiles_with_picture total_profiles 100 %}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Actions Card -->
+    <div class="p-6 rounded-lg shadow-md" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <h3 class="text-xl font-bold mb-5 pb-2 border-b" style="color: var(--color-primary); border-color: var(--border-color);">Admin Actions</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="{% url 'admin:auth_user_changelist' %}" class="p-4 rounded-lg flex items-center space-x-3 transition-colors" style="background-color: var(--bg-main); hover:background-color: var(--bg-card); color: var(--text-main);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(59, 130, 246, 0.1);">
+                    <i class="fas fa-users-cog" style="color: var(--color-blue);"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Manage Users</h4>
+                    <p class="text-sm" style="color: var(--text-muted);">User admin interface</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin:index' %}" class="p-4 rounded-lg flex items-center space-x-3 transition-colors" style="background-color: var(--bg-main); hover:background-color: var(--bg-card); color: var(--text-main);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(16, 185, 129, 0.1);">
+                    <i class="fas fa-tachometer-alt" style="color: #10b981;"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Django Admin</h4>
+                    <p class="text-sm" style="color: var(--text-muted);">Full admin interface</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'blog' %}" class="p-4 rounded-lg flex items-center space-x-3 transition-colors" style="background-color: var(--bg-main); hover:background-color: var(--bg-card); color: var(--text-main);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(245, 158, 11, 0.1);">
+                    <i class="fas fa-blog" style="color: #f59e0b;"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold">View Blog</h4>
+                    <p class="text-sm" style="color: var(--text-muted);">Return to site</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

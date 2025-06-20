@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+    <!-- Back button -->
+    <div class="mb-6">
+        <a href="{% url 'blog' %}" class="text-blue-700 hover:text-blue-900 hover:underline flex items-center transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Blog
+        </a>
+    </div>
+
+    <!-- Form Header -->
+    <div class="rounded-lg shadow-lg p-8" style="background-color: var(--bg-card); border-color: var(--border-color);">
+        <h1 class="text-3xl font-bold mb-6 border-b pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-color: var(--border-color);">
+            {% if is_create %}Create New Post{% else %}Edit Post{% endif %}
+        </h1>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title Field -->
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Title</label>
+                {{ form.title.errors }}
+                <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" 
+                       value="{{ form.title.value|default:'' }}"
+                       class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+                       style="background-color: var(--bg-main); color: var(--text-main); border-color: var(--border-color);"
+                       placeholder="Enter post title">
+            </div>
+            
+            <!-- Category Field -->
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Category</label>
+                {{ form.category.errors }}
+                <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}"
+                        class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+                        style="background-color: var(--bg-main); color: var(--text-main); border-color: var(--border-color);">
+                    {% for value, label in form.fields.category.choices %}
+                        <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Content Field -->
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Content</label>
+                <div class="mb-2 text-sm" style="color: var(--text-muted);">
+                    <p>Supports Markdown formatting: 
+                        <span class="px-1 rounded" style="background-color: var(--color-light); font-family: monospace;"># Heading 1</span>,
+                        <span class="px-1 rounded" style="background-color: var(--color-light); font-family: monospace;">## Heading 2</span>,
+                        <span class="px-1 rounded" style="background-color: var(--color-light); font-family: monospace;">**bold**</span>,
+                        <span class="px-1 rounded" style="background-color: var(--color-light); font-family: monospace;">*italic*</span>
+                    </p>
+                </div>
+                {{ form.content.errors }}
+                <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}" rows="12"
+                          class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+                          style="background-color: var(--bg-main); color: var(--text-main); border-color: var(--border-color); font-family: monospace;"
+                          placeholder="Write your post content here...">{{ form.content.value|default:'' }}</textarea>
+            </div>
+            
+            <!-- Image Field -->
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}" class="block font-bold mb-2" style="font-family: 'Playfair Display', serif; color: var(--text-main);">Featured Image</label>
+                {{ form.image.errors }}
+                
+                {% if post.image %}
+                <div class="mb-3">
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Current image:</p>
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="h-32 object-cover rounded-lg border" style="border-color: var(--border-color);">
+                </div>
+                {% endif %}
+                
+                <div class="mt-2 px-3 py-4 border border-dashed rounded-md" style="background-color: var(--bg-main); border-color: var(--border-color);">
+                    <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}"
+                           class="w-full" style="color: var(--text-main);">
+                    <p class="text-xs mt-2" style="color: var(--text-muted);">Optional. Recommended size: 1200x600px.</p>
+                </div>
+            </div>
+            
+            <!-- Published Status -->
+            <div class="form-group">
+                <div class="flex items-center">
+                    <input type="checkbox" name="{{ form.is_published.name }}" id="{{ form.is_published.id_for_label }}"
+                           {% if form.is_published.value %}checked{% endif %}
+                           class="w-4 h-4 text-blue-700 rounded focus:ring-blue-700" style="background-color: var(--bg-main); border-color: var(--border-color);">
+                    <label for="{{ form.is_published.id_for_label }}" class="ml-2 block font-bold" style="font-family: 'Playfair Display', serif; color: var(--text-main);">
+                        Publish immediately
+                    </label>
+                </div>
+                <p class="text-xs mt-1" style="color: var(--text-muted);">Uncheck to save as draft.</p>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="flex flex-wrap gap-4 mt-8">
+                <!-- Original buttons (commented out)
+                <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded font-semibold">
+                    {% if is_create %}Publish Post{% else %}Save Changes{% endif %}
+                </button>
+                <a href="{% url 'blog' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded font-semibold">
+                    Cancel
+                </a>
+                -->
+                <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded shadow-sm transition-colors">
+                    <i class="fas fa-feather-alt mr-2"></i> {% if is_create %}Publish Post{% else %}Save Changes{% endif %}
+                </button>
+                <a href="{% url 'blog' %}" class="px-6 py-3 rounded shadow-sm transition-colors" style="background-color: var(--color-light); color: var(--text-main);">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %} 
