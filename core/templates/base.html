@@ -221,15 +221,19 @@
     <!-- Header -->
     <header class="gold-gradient shadow-md">
         <div class="border-b border-opacity-10" style="border-color: var(--border-color);">
-            <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
-                <a href="{% url 'blog' %}" class="text-2xl font-bold" style="font-family: 'Playfair Display', serif;">
+            <nav class="container mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between">
+                <a href="{% url 'blog' %}" class="text-xl sm:text-2xl font-bold" style="font-family: 'Playfair Display', serif;">
                     <span style="color: var(--text-main);">Interim</span>
                     <span style="color: var(--color-accent);">Intellectual Hub</span>
                 </a>
-                <div class="flex items-center space-x-4">
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-toggle" class="sm:hidden ml-auto text-2xl focus:outline-none p-2 rounded-md hover:bg-black/10 transition-colors" aria-label="Open Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Desktop Navigation -->
+                <div class="hidden sm:flex items-center space-x-4">
                     <a href="{% url 'blog' %}" class="hover:text-accent border-b-2 border-transparent hover:border-current transition duration-300 font-normal" style="color: var(--text-main);">Blog</a>
                     <a href="{% url 'blog_post_create' %}" class="hover:text-accent border-b-2 border-transparent hover:border-current transition duration-300 font-normal" style="color: var(--text-main);">Create Post</a>
-                    
                     {% if user.is_authenticated %}
                     <div class="relative group">
                         <button class="flex items-center hover:text-accent focus:outline-none" style="color: var(--text-main);">
@@ -258,7 +262,6 @@
                     <a href="{% url 'accounts:login' %}" class="hover:text-accent border-b-2 border-transparent hover:border-current transition duration-300 font-normal" style="color: var(--text-main);">Log In</a>
                     <a href="{% url 'accounts:signup' %}" class="px-3 py-1 rounded-md bg-blue-700 hover:bg-blue-800 text-white text-sm transition">Sign Up</a>
                     {% endif %}
-                    
                     <button id="theme-toggle" class="theme-toggle ml-4" aria-label="Toggle Dark Mode">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -266,6 +269,69 @@
             </nav>
         </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden sm:hidden">
+        <div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] transform translate-x-full transition-transform duration-300 ease-in-out" style="background-color: var(--bg-card); border-left: 1px solid var(--border-color);">
+            <div class="flex items-center justify-between p-4 border-b" style="border-color: var(--border-color);">
+                <h3 class="text-lg font-bold" style="color: var(--text-main);">Menu</h3>
+                <button id="mobile-menu-close" class="text-2xl focus:outline-none p-2 rounded-md hover:bg-black/10 transition-colors" style="color: var(--text-main);">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="space-y-2">
+                    <a href="{% url 'blog' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                        <i class="fas fa-home mr-3"></i> Blog
+                    </a>
+                    <a href="{% url 'blog_post_create' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                        <i class="fas fa-feather-alt mr-3"></i> Create Post
+                    </a>
+                </div>
+                
+                {% if user.is_authenticated %}
+                <div class="border-t pt-4" style="border-color: var(--border-color);">
+                    <h4 class="text-sm font-semibold mb-2" style="color: var(--text-muted);">ACCOUNT</h4>
+                    <div class="space-y-2">
+                        <a href="{% url 'accounts:profile' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-user mr-3"></i> Profile
+                        </a>
+                        <a href="{% url 'accounts:profile_edit' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-cog mr-3"></i> Settings
+                        </a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'accounts:admin_dashboard' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-tachometer-alt mr-3"></i> Admin Dashboard
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'accounts:logout' %}" class="block py-2 px-3 rounded-md hover:bg-red-600 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-sign-out-alt mr-3"></i> Log Out
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="border-t pt-4" style="border-color: var(--border-color);">
+                    <h4 class="text-sm font-semibold mb-2" style="color: var(--text-muted);">ACCOUNT</h4>
+                    <div class="space-y-2">
+                        <a href="{% url 'accounts:login' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-sign-in-alt mr-3"></i> Log In
+                        </a>
+                        <a href="{% url 'accounts:signup' %}" class="block py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                            <i class="fas fa-user-plus mr-3"></i> Sign Up
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="border-t pt-4" style="border-color: var(--border-color);">
+                    <h4 class="text-sm font-semibold mb-2" style="color: var(--text-muted);">SETTINGS</h4>
+                    <button id="mobile-theme-toggle" class="w-full text-left py-2 px-3 rounded-md hover:bg-blue-700 hover:text-white transition-colors" style="color: var(--text-main);">
+                        <i class="fas fa-moon mr-3"></i> Toggle Theme
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main>
@@ -383,6 +449,62 @@
                     });
                 }, 5000 + (index * 150));
             });
+        });
+
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('mobile-menu-toggle');
+            const menuClose = document.getElementById('mobile-menu-close');
+            const menuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+            
+            function openMobileMenu() {
+                menuOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    mobileMenu.classList.remove('translate-x-full');
+                }, 10);
+            }
+            
+            function closeMobileMenu() {
+                mobileMenu.classList.add('translate-x-full');
+                setTimeout(() => {
+                    menuOverlay.classList.add('hidden');
+                }, 300);
+            }
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', openMobileMenu);
+            }
+            
+            if (menuClose) {
+                menuClose.addEventListener('click', closeMobileMenu);
+            }
+            
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', function(e) {
+                    if (e.target === menuOverlay) {
+                        closeMobileMenu();
+                    }
+                });
+            }
+            
+            if (mobileThemeToggle) {
+                mobileThemeToggle.addEventListener('click', function() {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const themeIcon = mobileThemeToggle.querySelector('i');
+                    
+                    if (currentTheme === 'dark') {
+                        document.documentElement.removeAttribute('data-theme');
+                        themeIcon.className = 'fas fa-moon mr-3';
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        themeIcon.className = 'fas fa-sun mr-3';
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
         });
     </script>
 </body>

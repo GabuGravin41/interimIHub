@@ -83,9 +83,64 @@
 </section>
 
 <!-- Main Content & Sidebar Grid -->
-<div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-  <!-- Blog Posts Column (spanning 2 columns on large screens) -->
-  <main class="lg:col-span-2 space-y-8">
+<div class="max-w-6xl mx-auto px-2 sm:px-6">
+  <!-- Mobile Sidebar (Top) -->
+  <aside class="lg:hidden mb-8">
+    <div class="bg-white rounded-lg border shadow-sm" style="background-color: var(--bg-card); border-color: var(--border-color);">
+      <!-- Collapsible Header -->
+      <button id="mobile-sidebar-toggle" class="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors" style="color: var(--text-main); border-bottom: 1px solid var(--border-color);">
+        <span class="font-semibold">Quick Navigation</span>
+        <i class="fas fa-chevron-down transition-transform" id="mobile-sidebar-icon"></i>
+      </button>
+      
+      <!-- Collapsible Content -->
+      <div id="mobile-sidebar-content" class="hidden p-4 space-y-6">
+        <!-- Recent Publications (Compact) -->
+        <div class="intellectual-border">
+          <h3 class="text-base font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Recent Publications</h3>
+          <ul class="mt-3 space-y-2">
+            {% for recent_post in recent_posts|slice:":3" %}
+              <li>
+                <a href="{% url 'blog_post_detail' post_id=recent_post.id %}" class="hover:text-blue-700 transition-colors text-sm" style="color: var(--text-main);">
+                  {{ recent_post.title|truncatechars:40 }}
+                  <div class="text-xs mt-1 text-orange-500">{{ recent_post.created_at|date:"M d, Y" }}</div>
+                </a>
+              </li>
+            {% empty %}
+              <li style="color: var(--text-muted);" class="italic text-sm">No recent publications</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Categories (Compact) -->
+        <div class="intellectual-border">
+          <h3 class="text-base font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Categories</h3>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {% for cat in categories %}
+              <a href="{% url 'blog' %}?category={{ cat }}" class="px-3 py-1 rounded-full text-xs transition-colors hover:bg-blue-700 hover:text-white" style="background-color: var(--color-light); color: var(--text-main);">
+                {{ cat|title }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="intellectual-border">
+          <h3 class="text-base font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Quick Actions</h3>
+          <div class="mt-3 space-y-2">
+            <a href="{% url 'blog_post_create' %}" class="block w-full bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm text-center">
+              <i class="fas fa-feather-alt mr-2"></i> Create New Post
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Desktop Layout Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Blog Posts Column (spanning 2 columns on large screens) -->
+    <main class="lg:col-span-2 space-y-8">
     {% if posts %}
       {% for post in posts %}
         <!-- Blog Post Card -->
@@ -169,64 +224,65 @@
     {% endif %}
   </main>
 
-  <!-- Sidebar Section -->  
-  <aside class="sidebar rounded-md border shadow-sm p-6 space-y-8 h-fit" style="background-color: var(--bg-card); border-color: var(--border-color);">
-    <div class="sidebar-section intellectual-border">
-      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Recent Publications</h3>
-      <ul class="mt-4 space-y-4">
-        {% for recent_post in recent_posts %}
-          <li>
-            <a href="{% url 'blog_post_detail' post_id=recent_post.id %}" class="hover:text-blue-700 transition-colors" style="color: var(--text-main);">
-              {{ recent_post.title }}
-              <div class="text-xs mt-1 text-orange-500">{{ recent_post.created_at|date:"M d, Y" }}</div>
-            </a>
-          </li>
-        {% empty %}
-          <li style="color: var(--text-muted);" class="italic">No recent publications</li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="sidebar-section intellectual-border">
-      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Share Your Thoughts</h3>
-      <div class="mt-4">
-        <p class="mb-3" style="color: var(--text-main);">Have something meaningful to share with the intellectual community?</p>
-        <a href="{% url 'blog_post_create' %}" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded inline-block text-sm">
-          <i class="fas fa-feather-alt mr-2"></i> Create New Post
-        </a>
+    <!-- Desktop Sidebar Section -->  
+    <aside class="hidden lg:block sidebar rounded-md border shadow-sm p-4 sm:p-6 space-y-8 h-fit" style="background-color: var(--bg-card); border-color: var(--border-color);">
+      <div class="sidebar-section intellectual-border">
+        <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Recent Publications</h3>
+        <ul class="mt-4 space-y-4">
+          {% for recent_post in recent_posts %}
+            <li>
+              <a href="{% url 'blog_post_detail' post_id=recent_post.id %}" class="hover:text-blue-700 transition-colors" style="color: var(--text-main);">
+                {{ recent_post.title }}
+                <div class="text-xs mt-1 text-orange-500">{{ recent_post.created_at|date:"M d, Y" }}</div>
+              </a>
+            </li>
+          {% empty %}
+            <li style="color: var(--text-muted);" class="italic">No recent publications</li>
+          {% endfor %}
+        </ul>
       </div>
-    </div>
 
-    <div class="sidebar-section intellectual-border">
-      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Categories</h3>
-      <ul class="mt-3 space-y-2 text-sm">
-        {% for cat in categories %}
+      <div class="sidebar-section intellectual-border">
+        <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Share Your Thoughts</h3>
+        <div class="mt-4">
+          <p class="mb-3" style="color: var(--text-main);">Have something meaningful to share with the intellectual community?</p>
+          <a href="{% url 'blog_post_create' %}" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded inline-block text-sm">
+            <i class="fas fa-feather-alt mr-2"></i> Create New Post
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-section intellectual-border">
+        <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Categories</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          {% for cat in categories %}
+            <li>
+              <a href="{% url 'blog' %}?category={{ cat }}" class="hover:text-blue-700 flex justify-between" style="color: var(--text-main);">
+                <span><i class="fas {% if cat == 'research' %}fa-flask text-purple-500{% elif cat == 'journal' %}fa-book text-blue-500{% elif cat == 'projects' %}fa-project-diagram text-green-500{% else %}fa-file-alt text-orange-500{% endif %} mr-2"></i> {{ cat|title }}</span>
+                <span class="px-2 rounded-full" style="background-color: var(--color-light); color: var(--text-main);">{{ category_counts|get_item:cat }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="sidebar-section intellectual-border">
+        <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Popular Tags</h3>
+        <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+          {% for tag in popular_tags %}
           <li>
-            <a href="{% url 'blog' %}?category={{ cat }}" class="hover:text-blue-700 flex justify-between" style="color: var(--text-main);">
-              <span><i class="fas {% if cat == 'research' %}fa-flask text-purple-500{% elif cat == 'journal' %}fa-book text-blue-500{% elif cat == 'projects' %}fa-project-diagram text-green-500{% else %}fa-file-alt text-orange-500{% endif %} mr-2"></i> {{ cat|title }}</span>
-              <span class="px-2 rounded-full" style="background-color: var(--color-light); color: var(--text-main);">{{ category_counts|get_item:cat }}</span>
+            <a href="{% url 'blog' %}?tag={{ tag.name }}" class="hover:bg-blue-700 hover:text-white px-3 py-1 rounded-full transition" style="background-color: var(--color-light); color: var(--text-main);">
+              #{{ tag.name }}
+              <span class="text-xs opacity-70">({{ tag.num_posts }})</span>
             </a>
           </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="sidebar-section intellectual-border">
-      <h3 class="text-lg font-bold pb-2" style="font-family: 'Playfair Display', serif; color: var(--color-primary); border-bottom: 1px solid var(--border-color);">Popular Tags</h3>
-      <ul class="mt-3 flex flex-wrap gap-2 text-sm">
-        {% for tag in popular_tags %}
-        <li>
-          <a href="{% url 'blog' %}?tag={{ tag.name }}" class="hover:bg-blue-700 hover:text-white px-3 py-1 rounded-full transition" style="background-color: var(--color-light); color: var(--text-main);">
-            #{{ tag.name }}
-            <span class="text-xs opacity-70">({{ tag.num_posts }})</span>
-          </a>
-        </li>
-        {% empty %}
-        <li class="italic w-full text-center py-2" style="color: var(--text-muted);">No tags yet</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </aside>
+          {% empty %}
+          <li class="italic w-full text-center py-2" style="color: var(--text-muted);">No tags yet</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+  </div>
 </div>
 
 <!-- JavaScript for Interactive Features -->
@@ -248,6 +304,27 @@
         });
       });
     });
+  });
+
+  // Mobile sidebar toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('mobile-sidebar-toggle');
+    const sidebarContent = document.getElementById('mobile-sidebar-content');
+    const sidebarIcon = document.getElementById('mobile-sidebar-icon');
+    
+    if (sidebarToggle && sidebarContent && sidebarIcon) {
+      sidebarToggle.addEventListener('click', function() {
+        const isHidden = sidebarContent.classList.contains('hidden');
+        
+        if (isHidden) {
+          sidebarContent.classList.remove('hidden');
+          sidebarIcon.style.transform = 'rotate(180deg)';
+        } else {
+          sidebarContent.classList.add('hidden');
+          sidebarIcon.style.transform = 'rotate(0deg)';
+        }
+      });
+    }
   });
 </script>
 {% endblock %}
